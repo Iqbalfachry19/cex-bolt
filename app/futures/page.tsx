@@ -134,9 +134,9 @@ export default function FuturesPage() {
     const maintenanceMargin = margin * 0.05; // 5% maintenance margin
     
     if (side === 'buy') {
-      return parseFloat(orderPrice) - (margin - maintenanceMargin) / parseFloat(orderSize);
+      return parseFloat(orderPrice) - ((margin - maintenanceMargin) / parseFloat(orderSize));
     } else {
-      return parseFloat(orderPrice) + (margin - maintenanceMargin) / parseFloat(orderSize);
+      return parseFloat(orderPrice) + ((margin - maintenanceMargin) / parseFloat(orderSize));
     }
   };
 
