@@ -134,15 +134,17 @@ const mockTransactions: Transaction[] = [
   }
 ];
 
-export function CexWallet() {
+interface CexWalletProps {
+  onDepositClick?: (asset?: string) => void;
+}
+
+export function CexWallet({ onDepositClick }: CexWalletProps) {
   const [balances, setBalances] = useState<WalletBalance[]>(mockBalances);
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [showBalances, setShowBalances] = useState(true);
   const [selectedAsset, setSelectedAsset] = useState<string>('');
-  const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawAddress, setWithdrawAddress] = useState('');
-  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
 
   const totalBalance = balances.reduce((sum, balance) => sum + balance.usdValue, 0);
@@ -179,13 +181,6 @@ export function CexWallet() {
       case 'transfer': return <Send className="h-4 w-4" />;
       default: return <Wallet className="h-4 w-4" />;
     }
-  };
-
-  const handleDeposit = () => {
-    // Mock deposit functionality
-    console.log(`Depositing ${depositAmount} ${selectedAsset}`);
-    setDepositAmount('');
-    setIsDepositDialogOpen(false);
   };
 
   const handleWithdraw = () => {
@@ -273,56 +268,10 @@ export function CexWallet() {
                   <CardDescription>Your cryptocurrency holdings</CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button>
-                        <ArrowDownToLine className="h-4 w-4 mr-2" />
-                        Deposit
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Deposit Funds</DialogTitle>
-                        <DialogDescription>
-                          Add cryptocurrency to your wallet
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label>Asset</Label>
-                          <Select value={selectedAsset} onValueChange={setSelectedAsset}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select asset" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {balances.map((balance) => (
-                                <SelectItem key={balance.id} value={balance.asset}>
-                                  {balance.asset} - {balance.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Amount</Label>
-                          <Input
-                            type="number"
-                            placeholder="0.00"
-                            value={depositAmount}
-                            onChange={(e) => setDepositAmount(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDepositDialogOpen(false)}>
-                          Cancel
-                        </Button>
-                        <Button onClick={handleDeposit} disabled={!selectedAsset || !depositAmount}>
-                          Generate Address
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                  <Button onClick={() => onDepositClick?.()}>
+                    <ArrowDownToLine className="h-4 w-4 mr-2" />
+                    Deposit
+                  </Button>
 
                   <Dialog open={isWithdrawDialogOpen} onOpenChange={setIsWithdrawDialogOpen}>
                     <DialogTrigger asChild>
@@ -440,10 +389,7 @@ export function CexWallet() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => {
-                              setSelectedAsset(balance.asset);
-                              setIsDepositDialogOpen(true);
-                            }}
+                            onClick={() => onDepositClick?.(balance.asset)}
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
