@@ -375,7 +375,7 @@ export function DepositModal({ isOpen, onClose, selectedAsset, onDepositSuccess 
 
         <DialogFooter className="flex gap-2">
           {step !== 'select' && (
-            <Button variant="outline" onClick={handleBack}>
+            <Button variant="outline\" onClick={handleBack}>
               Back
             </Button>
           )}
